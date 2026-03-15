@@ -1,0 +1,26 @@
+log:
+    # 日志输出目录
+    log_dir: ./logs
+
+    # 终端日志
+    log_console: true
+
+    # 开发日志是否开启（只在debug模式有效，release模式下无法编译）
+    log_develop: true
+
+    # 记录错误日志
+    log_error: true
+
+    # 记录每日日志
+    log_daily: true
+    # trace日志文件大小（MB）
+    log_size: 250
+    # trace日志文件数量
+    log_count: 10
+    # 是否压缩trace日志
+    # TODO spdlog未实现压缩功能, 需要手动实现;
+    # 参考: common/time_split_file_sink.h
+    log_zip: true
+
+    # trace日志级别（trace, debug, info, warn, err, critical, off）
+    trace_level: info
