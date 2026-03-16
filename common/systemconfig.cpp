@@ -65,7 +65,7 @@ public:
         std::string exeDir = exePathObj.parent_path().string();
 
         // 构建配置文件路径
-        std::string configPath = exeDir + "/conf/base_config.yaml";
+        std::string configPath = exeDir + "/config/base_config.yaml";
 
         // 2. 使用yaml-cpp读取配置
         YAML::Node yaml_config;

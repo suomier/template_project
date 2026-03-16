@@ -69,13 +69,10 @@ target_compile_options(${PROJECT_NAME} PUBLIC
         $<$<C_COMPILER_ID:GNU>:-Wno-deprecated-declarations>
         $<$<CXX_COMPILER_ID:GNU>:-Wno-deprecated-declarations>)
 
-# 指定可执行文件的输出目录
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-# 指定库文件的输出目录
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-# 指定静态库文件的输出目录
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-# 指定临时文件的输出目录
-set(CMAKE_TEMPORARY_OBJECTS_DIRECTORY ${CMAKE_BINARY_DIR}/temp)
-
+# 构建后将 ${CMAKE_SOURCE_DIR}/conf 目录拷贝到 ${CMAKE_BINARY_DIR}/bin
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/config
+        ${CMAKE_BINARY_DIR}/bin/config
+    COMMENT "Copying conf directory to ${CMAKE_BINARY_DIR}/bin/conf")
 

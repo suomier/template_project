@@ -152,7 +152,7 @@ private:
 };
 
 #ifndef ModuleName
-#define ModuleName "defaule model"
+#define ModuleName "default model"
 #endif // ModuleName
 
 #define log_dev(msg, ...) Logger::Instance()->develop(ModuleName, __FILE__, __LINE__, __func__, msg, ##__VA_ARGS__)
