@@ -22,18 +22,6 @@ void Logger::Init()
     // 从配置文件获取日志配置
     auto log_dir = SystemConfig::Instance()->getVal(E_Module_Log, "log_dir").get<std::string>("./logs");
 
-    // 创建日志目录
-    try
-    {
-        std::filesystem::create_directories(log_dir + "/daily");
-        std::filesystem::create_directories(log_dir + "/error");
-        std::filesystem::create_directories(log_dir + "/trace");
-    }
-    catch (const std::exception &e)
-    {
-        fprintf(stderr, "create log directories failed: %s\n", e.what());
-    }
-
     // 设置为异步日志
     std::vector<spdlog::sink_ptr> log_sink_list;
 
