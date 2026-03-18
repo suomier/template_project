@@ -1,11 +1,10 @@
 ﻿#include <cstring>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 #include <vector>
 
-#include <zlib.h>
 #include <spdlog/spdlog.h>
+#include <zlib.h>
 
 namespace fs = std::filesystem;
 
@@ -19,17 +18,17 @@ namespace fs = std::filesystem;
 #pragma pack(push, 1)
 struct ZipLocalFileHeader
 {
-    uint32_t signature; // 0x04034b50
-    uint16_t version_needed;
-    uint16_t flags;
-    uint16_t compression;
-    uint16_t mod_time;
-    uint16_t mod_date;
-    uint32_t crc32;
-    uint32_t compressed_size;
-    uint32_t uncompressed_size;
-    uint16_t filename_length;
-    uint16_t extra_length;
+    uint32_t signature;         ///< 本地文件头签名值，固定为 0x04034b50，用于标识 ZIP 本地文件头的开始
+    uint16_t version_needed;    ///< 解压该文件所需的最小 ZIP 版本，值为 20 表示支持 ZIP 2.0 标准
+    uint16_t flags;             ///< 通用位标志，用于指定加密、数据描述符等特殊处理方式，0 表示无特殊标志
+    uint16_t compression;       ///< 压缩方法，0 表示不压缩，8 表示使用 Deflate 算法压缩
+    uint16_t mod_time;          ///< 文件最后修改时间，采用 MS-DOS 时间格式，每个字段占用特定比特位
+    uint16_t mod_date;          ///< 文件最后修改日期，采用 MS-DOS 日期格式，年月日各占用特定比特位
+    uint32_t crc32;             ///< 未压缩数据的 CRC-32 校验和，用于验证文件完整性
+    uint32_t compressed_size;   ///< 压缩后数据的大小（字节），若不压缩则与 uncompressed_size 相等
+    uint32_t uncompressed_size; ///< 未压缩数据的大小（字节），即原始文件的实际大小
+    uint16_t filename_length;   ///< 文件名字段的长度（字节），紧接在文件头之后
+    uint16_t extra_length;      ///< 扩展字段的长度（字节），用于存储额外的元数据信息
 };
 
 /**
@@ -40,23 +39,23 @@ struct ZipLocalFileHeader
  */
 struct ZipCentralDirectory
 {
-    uint32_t signature; // 0x02014b50
-    uint16_t version_made_by;
-    uint16_t version_needed;
-    uint16_t flags;
-    uint16_t compression;
-    uint16_t mod_time;
-    uint16_t mod_date;
-    uint32_t crc32;
-    uint32_t compressed_size;
-    uint32_t uncompressed_size;
-    uint16_t filename_length;
-    uint16_t extra_length;
-    uint16_t file_comment_length;
-    uint16_t disk_number_start;
-    uint16_t internal_file_attributes;
-    uint32_t external_file_attributes;
-    uint32_t relative_offset_local_header;
+    uint32_t signature;                    ///< 中央目录签名值，固定为 0x02014b50，用于标识中央目录记录的开始
+    uint16_t version_made_by;              ///< 创建该 ZIP 文件的程序版本，高字节表示系统类型，低字节表示 ZIP 版本
+    uint16_t version_needed;               ///< 解压该文件所需的最小 ZIP 版本，值为 20 表示支持 ZIP 2.0 标准
+    uint16_t flags;                        ///< 通用位标志，用于指定加密、数据描述符等特殊处理方式，0 表示无特殊标志
+    uint16_t compression;                  ///< 压缩方法，0 表示不压缩，8 表示使用 Deflate 算法压缩
+    uint16_t mod_time;                     ///< 文件最后修改时间，采用 MS-DOS 时间格式，每个字段占用特定比特位
+    uint16_t mod_date;                     ///< 文件最后修改日期，采用 MS-DOS 日期格式，年月日各占用特定比特位
+    uint32_t crc32;                        ///< 未压缩数据的 CRC-32 校验和，用于验证文件完整性
+    uint32_t compressed_size;              ///< 压缩后数据的大小（字节），若不压缩则与 uncompressed_size 相等
+    uint32_t uncompressed_size;            ///< 未压缩数据的大小（字节），即原始文件的实际大小
+    uint16_t filename_length;              ///< 文件名字段的长度（字节），紧接在中央目录记录之后
+    uint16_t extra_length;                 ///< 扩展字段的长度（字节），用于存储额外的元数据信息
+    uint16_t file_comment_length;          ///< 文件注释字段的长度（字节），用于存储关于文件的说明信息
+    uint16_t disk_number_start;            ///< 文件起始位置的磁盘号，对于单卷 ZIP 文件通常为 0
+    uint16_t internal_file_attributes;     ///< 内部文件属性，指示文件的内部状态，通常为 0
+    uint32_t external_file_attributes;     ///< 外部文件属性，包含文件权限和类型信息，0x81000000 表示普通文件
+    uint32_t relative_offset_local_header; ///< 本地文件头相对于 ZIP 文件起始位置的偏移量，用于定位文件数据
 };
 
 /**
@@ -67,14 +66,14 @@ struct ZipCentralDirectory
  */
 struct ZipEndOfCentralDirectory
 {
-    uint32_t signature; // 0x06054b50
-    uint16_t disk_number;
-    uint16_t central_dir_disk;
-    uint16_t entries_on_disk;
-    uint16_t total_entries;
-    uint32_t central_dir_size;
-    uint32_t central_dir_offset;
-    uint16_t comment_length;
+    uint32_t signature;          ///< 中央目录结束签名值，固定为 0x06054b50，用于标识中央目录结束记录的开始
+    uint16_t disk_number;        ///< 包含中央目录结束记录的磁盘号，对于单卷 ZIP 文件通常为 0
+    uint16_t central_dir_disk;   ///< 中央目录起始位置的磁盘号，对于单卷 ZIP 文件通常为 0
+    uint16_t entries_on_disk;    ///< 该磁盘上的中央目录记录数量，对于单卷 ZIP 文件等于 total_entries
+    uint16_t total_entries;      ///< 整个 ZIP 存档中的中央目录记录总数，即 ZIP 文件中的文件总数
+    uint32_t central_dir_size;   ///< 中央目录的总大小（字节），包括所有中央目录记录和文件名
+    uint32_t central_dir_offset; ///< 中央目录相对于 ZIP 文件起始位置的偏移量，用于定位中央目录
+    uint16_t comment_length;     ///< ZIP 文件注释的长度（字节），紧接在中央目录结束记录之后
 };
 #pragma pack(pop)
 

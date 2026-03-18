@@ -25,7 +25,7 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
         GIT_TAG yaml-cpp-0.7.0
         SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/yaml-cpp  # 指定源码下载目录
-        BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/yaml-cpp  # 指定构建目录
+        BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/yaml-cpp     # 指定构建目录
 )
 FetchContent_MakeAvailable(yaml-cpp)
 list(APPEND COMMON_LIBS yaml-cpp)
@@ -36,7 +36,7 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
         GIT_TAG v1.16.0
         SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/spdlog  # 指定源码下载目录
-        BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/spdlog  # 指定构建目录
+        BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/spdlog     # 指定构建目录
 )
 FetchContent_MakeAvailable(spdlog)
 list(APPEND COMMON_LIBS spdlog::spdlog_header_only)
@@ -47,7 +47,7 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/madler/zlib.git
         GIT_TAG v1.3.2
         SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/zlib  # 指定源码目录
-        BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/zlib      # 指定构建目录
+        BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/zlib     # 指定构建目录
 )
 FetchContent_MakeAvailable(zlib)
 list(APPEND COMMON_LIBS zlib)
