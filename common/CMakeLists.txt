@@ -47,13 +47,20 @@ message("CMAKE_SOURCE_DIR:${CMAKE_SOURCE_DIR}")
 message("CMAKE_CURRENT_SOURCE_DIR:${CMAKE_CURRENT_SOURCE_DIR}")
 
 file(GLOB SOURCE_FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/*.cc"
+        "${CMAKE_CURRENT_SOURCE_DIR}/base/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/settings/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/logger/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/platform/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
         )
 
 file(GLOB HEADER_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/base/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/settings/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/logger/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/platform/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
         )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
@@ -71,8 +78,8 @@ target_compile_options(${PROJECT_NAME} PUBLIC
 
 # 构建后将 ${CMAKE_SOURCE_DIR}/conf 目录拷贝到 ${CMAKE_BINARY_DIR}/bin
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/config
         ${CMAKE_BINARY_DIR}/bin/config
-    COMMENT "Copying conf directory to ${CMAKE_BINARY_DIR}/bin/conf")
+        COMMENT "Copying conf directory to ${CMAKE_BINARY_DIR}/bin/conf")
 

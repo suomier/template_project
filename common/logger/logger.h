@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "systemconfig.h"
+#include "settings/systemconfig.h"
 
 // 使用 spdlog 封装以下4种日志：
 // 1.每日循环日志，无论任何级别都记录，记录在目录：logs/daily，只记录最近一天的，超出时间则自动删除

@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 
-#include "systemconfig.h"
+#include "settings/systemconfig.h"
 
 int main()
 {

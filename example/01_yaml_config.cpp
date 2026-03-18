@@ -1,6 +1,6 @@
-﻿#include <yaml-cpp/yaml.h>
+﻿#include <iostream>
 
-#include <iostream>
+#include <yaml-cpp/yaml.h>
 
 struct GeneralConf
 {
