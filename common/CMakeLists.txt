@@ -41,6 +41,16 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(spdlog)
 list(APPEND COMMON_LIBS spdlog::spdlog_header_only)
 
+# zlib
+FetchContent_Declare(
+        zlib
+        GIT_REPOSITORY https://github.com/madler/zlib.git
+        GIT_TAG v1.3.2
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/zlib  # 指定源码目录
+        BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/zlib      # 指定构建目录
+)
+FetchContent_MakeAvailable(zlib)
+list(APPEND COMMON_LIBS zlib)
 
 message("COMMON_LIBS:${COMMON_LIBS}")
 message("CMAKE_SOURCE_DIR:${CMAKE_SOURCE_DIR}")
