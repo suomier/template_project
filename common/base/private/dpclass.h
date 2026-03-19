@@ -3,11 +3,14 @@
 
 #include "base/common_def.h"
 
+// DP 指针例子
+
 class DPClassPrivate;
 
 class DPClass
 {
-    Q_DECLARE_PRIVATE(DPClass)
+    DECLARE_PRIVATE(DPClass)
+    DISABLE_COPY_MOVE(DPClass)
 public:
     DPClass();
     ~DPClass();
