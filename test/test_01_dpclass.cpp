@@ -1,7 +1,6 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include "base/private/dpclass.h"
-#include <memory>
 
 /**
  * @brief DP 指针模式测试用例
