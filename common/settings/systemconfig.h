@@ -6,7 +6,7 @@
 #include <string>
 #include <variant>
 
-#include "base/common_def.h"
+#include "base/common_types.h"
 
 struct ConfigValue
 {
