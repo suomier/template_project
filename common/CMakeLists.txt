@@ -50,7 +50,16 @@ FetchContent_Declare(
         BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/zlib     # 指定构建目录
 )
 FetchContent_MakeAvailable(zlib)
-list(APPEND COMMON_LIBS zlib)
+
+# 根据 BUILD_ZLIB_STATIC 选项选择链接静态库或动态库
+option(BUILD_ZLIB_STATIC "Build zlib as static library" ON)
+if (BUILD_ZLIB_STATIC)
+    list(APPEND COMMON_LIBS ZLIB::ZLIBSTATIC)
+    message("zlib configured as: STATIC library")
+else ()
+    list(APPEND COMMON_LIBS zlib)
+    message("zlib configured as: SHARED library")
+endif ()
 
 # libarchive
 include(FetchContent)
