@@ -52,6 +52,25 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(zlib)
 list(APPEND COMMON_LIBS zlib)
 
+# libarchive
+include(FetchContent)
+FetchContent_Declare(
+        libarchive
+        GIT_REPOSITORY https://github.com/libarchive/libarchive.git
+        GIT_TAG v3.8.6
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/libarchive  # 指定源码目录
+        BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/libarchive     # 指定构建目录
+        )
+FetchContent_MakeAvailable(libarchive)
+
+
+# 在Windows上静态链接时需要定义宏
+if (WIN32)
+    list(APPEND COMMON_DEFINED LIBARCHIVE_STATIC)
+endif ()
+list(APPEND COMMON_LIBS archive_static)
+
+
 message("COMMON_LIBS:${COMMON_LIBS}")
 message("CMAKE_SOURCE_DIR:${CMAKE_SOURCE_DIR}")
 message("CMAKE_CURRENT_SOURCE_DIR:${CMAKE_CURRENT_SOURCE_DIR}")
