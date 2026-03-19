@@ -69,9 +69,8 @@ FetchContent_Declare(
         GIT_TAG v3.8.6
         SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/libarchive  # 指定源码目录
         BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/libarchive     # 指定构建目录
-        )
+)
 FetchContent_MakeAvailable(libarchive)
-
 
 # 在Windows上静态链接时需要定义宏
 if (WIN32)
