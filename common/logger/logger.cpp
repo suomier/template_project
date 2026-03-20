@@ -40,7 +40,7 @@ void Logger::Init()
         // 开发日志
         auto develop_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         // develop 关键字为蓝色
-        develop_sink->set_pattern("[%Y-%m-%d %H:%M:%S:%f %z] [\33[1;34mdevelop \33[0m] %v");;
+        develop_sink->set_pattern("[%Y-%m-%d %H:%M:%S:%f %z] [\33[1;34mdevelop \33[0m] %v");
         develop_sink->set_level(spdlog::level::info);
 
         develop_logger_ = std::make_shared<spdlog::logger>("develop_sink", develop_sink);

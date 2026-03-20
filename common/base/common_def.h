@@ -42,4 +42,15 @@
     DISABLE_COPY(Class)          \
     DISABLE_MOVE(Class)
 
+
+// ============================================== 消除编译警告: 未使用参数警告
+/**
+ * @brief 消除未使用参数警告的宏
+ * @param A 未使用的参数
+ *
+ * 用于消除编译器对未使用函数参数的警告
+ */
+#define UNUSED(x) (void)x;
+#define UNUSED_ARG(x) (void)x;
+
 #endif // COMMON_DEF_H
