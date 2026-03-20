@@ -83,27 +83,28 @@ message("COMMON_LIBS:${COMMON_LIBS}")
 message("CMAKE_SOURCE_DIR:${CMAKE_SOURCE_DIR}")
 message("CMAKE_CURRENT_SOURCE_DIR:${CMAKE_CURRENT_SOURCE_DIR}")
 
+file(GLOB HEADER_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/base/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/base/private/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/platform/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/io/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/network/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/thread/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/settings/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/logger/*.h"
+        )
+
 file(GLOB SOURCE_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/base/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/base/private/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/platform/*"
         "${CMAKE_CURRENT_SOURCE_DIR}/io/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/network/*"
+        "${CMAKE_CURRENT_SOURCE_DIR}/thread/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/settings/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/logger/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/thread/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/platform/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
-        )
-
-file(GLOB HEADER_FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/base/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/base/private/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/io/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/settings/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/logger/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/thread/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/platform/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
         )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
