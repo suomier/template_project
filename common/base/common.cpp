@@ -1,7 +1,7 @@
 ﻿#include "common_def.h"
 #include "common_types.h"
 
- const char *getModuleType(E_Module_Type type)
+const char *getModuleType(E_Module_Type type)
 {
     switch (type)
     {

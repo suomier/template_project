@@ -3,6 +3,7 @@ project(template_base)
 
 # 设置 C++ 标准
 set(CMAKE_CXX_STANDARD 17)
+# 强制使用 C++
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # 指定可执行文件的输出目录
