@@ -12,11 +12,8 @@ FileCompressor::FileCompressor()
 
 bool FileCompressor::CompressDirectory(const std::string &source_dir, const std::string &output_archive)
 {
-    spdlog::info("Starting archive compression: {} -> {}", source_dir, output_archive.empty() ? "(auto)" : output_archive);
-
     if (!std::filesystem::exists(source_dir))
     {
-        spdlog::error("Source directory does not exist: {}", source_dir);
         return false;
     }
 
@@ -31,7 +28,6 @@ bool FileCompressor::CompressDirectory(const std::string &source_dir, const std:
     struct archive *arch = archive_write_new();
     if (arch == nullptr)
     {
-        spdlog::error("Failed to create archive object");
         return false;
     }
 
@@ -45,7 +41,6 @@ bool FileCompressor::CompressDirectory(const std::string &source_dir, const std:
     // 打开输出文件
     if (archive_write_open_filename(arch, output_path.c_str()) != ARCHIVE_OK)
     {
-        spdlog::error("Failed to open output file: {}", output_path);
         archive_write_free(arch);
         return false;
     }
@@ -67,14 +62,13 @@ bool FileCompressor::CompressDirectory(const std::string &source_dir, const std:
                 // 添加文件条目
                 if (!AddFileToArchive(arch, entry.path().string(), relative_path, entry.last_write_time()))
                 {
-                    spdlog::error("Failed to add file to archive: {}", entry.path().string());
+                    // spdlog::error("Failed to add file to archive: {}", entry.path().string());
                 }
             }
         }
     }
     catch (const std::exception &e)
     {
-        spdlog::error("Error while traversing directory: {}", e.what());
         archive_write_close(arch);
         archive_write_free(arch);
         return false;
@@ -84,7 +78,6 @@ bool FileCompressor::CompressDirectory(const std::string &source_dir, const std:
     archive_write_close(arch);
     archive_write_free(arch);
 
-    spdlog::info("Compression completed! Compressed {} entries to {}", file_count_, output_path);
     return true;
 }
 
@@ -102,15 +95,12 @@ bool FileCompressor::SetupArchiveFormat(struct archive *arch) const
 {
 #ifdef _WIN32
     // Windows 平台使用 ZIP 格式
-    spdlog::info("Using ZIP format (Windows platform)");
     archive_write_set_format_zip(arch);
 #else
     // Unix/Linux/macOS 平台使用 tar.gz 格式
-    spdlog::info("Using tar.gz format (Unix platform)");
     archive_write_add_filter_gzip(arch);
     archive_write_set_format_pax_restricted(arch);
 #endif
-
     return true;
 }
 
@@ -119,7 +109,6 @@ bool FileCompressor::AddDirectoryToArchive(struct archive *arch, const std::stri
     struct archive_entry *entry = archive_entry_new();
     if (entry == nullptr)
     {
-        spdlog::error("Failed to create archive entry for directory: {}", relative_path);
         return false;
     }
 
@@ -129,7 +118,6 @@ bool FileCompressor::AddDirectoryToArchive(struct archive *arch, const std::stri
 
     if (archive_write_header(arch, entry) != ARCHIVE_OK)
     {
-        spdlog::error("Failed to write directory header: {}", archive_error_string(arch));
         archive_entry_free(entry);
         return false;
     }
@@ -140,13 +128,10 @@ bool FileCompressor::AddDirectoryToArchive(struct archive *arch, const std::stri
 
 bool FileCompressor::AddFileToArchive(struct archive *arch, const std::string &filepath, const std::string &relative_path, std::filesystem::file_time_type last_write_time)
 {
-    spdlog::info("Adding file: {}", relative_path);
-
     // 读取文件内容
     std::ifstream in_file(filepath, std::ios::binary);
     if (!in_file.is_open())
     {
-        spdlog::error("Failed to read file: {}", filepath);
         return false;
     }
 
@@ -157,7 +142,6 @@ bool FileCompressor::AddFileToArchive(struct archive *arch, const std::string &f
     struct archive_entry *entry = archive_entry_new();
     if (entry == nullptr)
     {
-        spdlog::error("Failed to create archive entry for file: {}", relative_path);
         return false;
     }
 
@@ -169,7 +153,6 @@ bool FileCompressor::AddFileToArchive(struct archive *arch, const std::string &f
     // 写入文件头部
     if (archive_write_header(arch, entry) != ARCHIVE_OK)
     {
-        spdlog::error("Failed to write file header: {}", archive_error_string(arch));
         archive_entry_free(entry);
         return false;
     }
@@ -178,7 +161,6 @@ bool FileCompressor::AddFileToArchive(struct archive *arch, const std::string &f
     la_ssize_t bytes_written = archive_write_data(arch, buffer.data(), buffer.size());
     if (bytes_written < 0)
     {
-        spdlog::error("Failed to write file data: {}", archive_error_string(arch));
         archive_entry_free(entry);
         return false;
     }
