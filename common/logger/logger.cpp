@@ -2,6 +2,8 @@
 
 #include <filesystem>
 
+#include "rotating_compress_file_sink.h"
+
 Logger::Logger()
 {
 }
@@ -71,12 +73,22 @@ void Logger::Init()
     }
 
     // 4. 追踪日志：可配置级别，运行时支持动态配置，配置大小，自动压缩，位于 logs/trace
-    bool log_zip = SystemConfig::Instance()->getVal(E_Module_Log, "log_zip").get<bool>(true);
     int log_size = SystemConfig::Instance()->getVal(E_Module_Log, "log_size").get<int>(250); // 单位: MB
     int log_count = SystemConfig::Instance()->getVal(E_Module_Log, "log_count").get<int>(10);
 
+    bool log_zip = SystemConfig::Instance()->getVal(E_Module_Log, "log_zip").get<bool>(true);
+    int log_zip_count = SystemConfig::Instance()->getVal(E_Module_Log, "log_zip_count").get<int>(10);
+
     std::string trace_log_path = log_dir + "/trace/trace.log";
-    auto trace_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(trace_log_path, log_size * 1024 * 1024, log_count, log_zip);
+
+    //    auto trace_sink = std::make_shared<spdlog::sinks::rotating_compress_file_sink_mt>(trace_log_path,
+    //                                                                                      10 * 1024, 10, true,
+    //                                                                                      true, 5);
+    
+    auto trace_sink = std::make_shared<spdlog::sinks::rotating_compress_file_sink_mt>(trace_log_path,
+                                                                                      log_size * 1024 * 1024, log_count, true,
+                                                                                      log_zip, log_zip_count);
+
     trace_sink->set_pattern("[%Y-%m-%d %H:%M:%S:%f %z] [%^%=8l%$] %v");
     log_sink_list.push_back(trace_sink);
 

@@ -19,8 +19,6 @@ log:
     log_count: 10
 
     # 是否压缩trace日志
-    # TODO spdlog未实现压缩功能, 需要手动实现;
-    # 参考: common/logger/time_split_file_sink.h
     log_zip: true
     # 日志压缩数量, 每个压缩包内部压缩 log_count 个日志
     log_zip_count: 10

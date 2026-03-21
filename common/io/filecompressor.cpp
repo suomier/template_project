@@ -81,6 +81,71 @@ bool FileCompressor::CompressDirectory(const std::string &source_dir, const std:
     return true;
 }
 
+bool FileCompressor::CompressFiles(const std::vector<std::pair<std::string, std::string>> &files, const std::string &output_archive)
+{
+    if (files.empty())
+    {
+        return false;
+    }
+
+    // 创建归档对象
+    struct archive *arch = archive_write_new();
+    if (arch == nullptr)
+    {
+        return false;
+    }
+
+    // 根据平台设置压缩格式
+    if (!SetupArchiveFormat(arch))
+    {
+        archive_write_free(arch);
+        return false;
+    }
+
+    // 打开输出文件
+    if (archive_write_open_filename(arch, output_archive.c_str()) != ARCHIVE_OK)
+    {
+        archive_write_free(arch);
+        return false;
+    }
+
+    // 添加所有文件到归档
+    file_count_ = 0;
+    try
+    {
+        for (const auto &file_pair : files)
+        {
+            const std::string &source_path = file_pair.first;
+            const std::string &relative_path = file_pair.second;
+
+            if (!std::filesystem::exists(source_path))
+            {
+                continue;
+            }
+
+            std::error_code ec;
+            auto last_write_time = std::filesystem::last_write_time(source_path, ec);
+
+            if (!AddFileToArchive(arch, source_path, relative_path, last_write_time))
+            {
+                // spdlog::error("Failed to add file to archive: {}", source_path);
+            }
+        }
+    }
+    catch (const std::exception &e)
+    {
+        archive_write_close(arch);
+        archive_write_free(arch);
+        return false;
+    }
+
+    // 关闭归档并释放资源
+    archive_write_close(arch);
+    archive_write_free(arch);
+
+    return true;
+}
+
 std::string FileCompressor::GetDefaultOutputPath(const std::string &source_dir) const
 {
     std::string dir_name = std::filesystem::path(source_dir).filename().string();

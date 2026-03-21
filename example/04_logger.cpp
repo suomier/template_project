@@ -22,10 +22,10 @@ int main(int, char *[])
     log_dev("This is a dev message");
     log_dev("Debug info: value = {}", 42);
 
-    // for (int i = 0; i < INT_MAX; ++i)
-    // {
-    //     log_info("This is an info message");
-    // }
+     for (int i = 0; i < INT_MAX; ++i)
+     {
+         log_info("This is an info message");
+     }
 
     Logger::Instance()->UnInit();
     return 0;

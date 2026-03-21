@@ -38,6 +38,19 @@ public:
      */
     bool CompressDirectory(const std::string &source_dir, const std::string &output_archive = "");
 
+    /**
+     * @brief 将多个文件压缩为归档文件
+     *
+     * 根据平台自动选择压缩格式：
+     * - Windows: ZIP 格式
+     * - Unix/Linux/macOS: tar.gz 格式
+     *
+     * @param files 要压缩的文件列表（包含源文件路径和在归档中的相对路径）
+     * @param output_archive 输出归档文件路径
+     * @return 如果压缩成功返回 true，否则返回 false
+     */
+    bool CompressFiles(const std::vector<std::pair<std::string, std::string>> &files, const std::string &output_archive);
+
 private:
     /**
      * @brief 根据平台生成默认的输出文件路径

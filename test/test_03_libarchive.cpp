@@ -95,6 +95,69 @@ TEST(LibArchiveTest, BasicDirectoryCompression)
     CleanupTestFiles(test_dir, output_archive);
 }
 
+// 测试多个文件压缩
+TEST(LibArchiveTest, CompressFilesList)
+{
+    std::string output_archive;
+
+#ifdef _WIN32
+    output_archive = "test_output_files.zip";
+#else
+    output_archive = "test_output_files.tar.gz";
+#endif
+
+    // 创建多个测试文件
+    std::vector<std::string> test_files;
+    try
+    {
+        for (int i = 0; i < 5; ++i)
+        {
+            std::string filename = "test_file_" + std::to_string(i) + ".txt";
+            std::ofstream(filename) << "Content of file " << i << "\nLine 2 of file " << i << "\n";
+            test_files.push_back(filename);
+        }
+    }
+    catch (const std::exception &)
+    {
+        FAIL() << "Failed to create test files";
+    }
+
+    // 准备压缩文件列表
+    std::vector<std::pair<std::string, std::string>> files_to_zip;
+    for (const auto &file : test_files)
+    {
+        files_to_zip.emplace_back(file, file);
+    }
+
+    // 执行压缩
+    FileCompressor compressor;
+    bool result = compressor.CompressFiles(files_to_zip, output_archive);
+    EXPECT_TRUE(result);
+
+    // 验证归档文件已创建
+    EXPECT_TRUE(fs::exists(output_archive));
+
+    // 清理
+    try
+    {
+        for (const auto &file : test_files)
+        {
+            if (fs::exists(file))
+            {
+                fs::remove(file);
+            }
+        }
+        if (fs::exists(output_archive))
+        {
+            fs::remove(output_archive);
+        }
+    }
+    catch (const std::exception &)
+    {
+        // 忽略清理错误
+    }
+}
+
 // 测试空目录压缩
 TEST(LibArchiveTest, EmptyDirectoryCompression)
 {
