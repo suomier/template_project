@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <memory>
+#include <string>
+#include <variant>
 
 // ============================================ DP 指针
 
@@ -41,7 +43,6 @@
 #define DISABLE_COPY_MOVE(Class) \
     DISABLE_COPY(Class)          \
     DISABLE_MOVE(Class)
-
 
 // ============================================== 消除编译警告: 未使用参数警告
 /**

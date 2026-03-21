@@ -13,16 +13,6 @@
 
 #include <array>
 
-ISettingUpdate::ISettingUpdate(E_Module_Type eType)
-    : eType_(eType)
-{
-}
-
-E_Module_Type ISettingUpdate::getModuleType() const
-{
-    return eType_;
-}
-
 std::string ConfigValue::toString() const
 {
     return std::visit([](auto &&arg) -> std::string
@@ -40,10 +30,12 @@ std::string ConfigValue::toString() const
                       value);
 }
 
-class SystemConfigPrivate
+class SystemConfigPrivate final
 {
+    DECLARE_PUBLIC(SystemConfig)
 public:
-    SystemConfigPrivate()
+    SystemConfigPrivate(SystemConfig *parent)
+        : q_ptr(parent)
     {
         // 1. 获取程序路径
         std::string exePath;
@@ -172,18 +164,11 @@ private:
 };
 
 SystemConfig::SystemConfig()
-    : d_(new SystemConfigPrivate())
+    : d_ptr(std::make_unique<SystemConfigPrivate>(this))
 {
 }
 
-SystemConfig::~SystemConfig()
-{
-    if (d_)
-    {
-        delete d_;
-        d_ = nullptr;
-    }
-}
+SystemConfig::~SystemConfig() = default;
 
 SystemConfig *SystemConfig::Instance()
 {
@@ -193,17 +178,12 @@ SystemConfig *SystemConfig::Instance()
 
 void SystemConfig::setUpdateReceive(ISettingUpdate *receiver)
 {
-    if (d_)
-    {
-        d_->setUpdateReceive(receiver);
-    }
+    DP_D(SystemConfig);
+    d->setUpdateReceive(receiver);
 }
 
 const ConfigValue &SystemConfig::getVal(E_Module_Type eType, const char *key)
 {
-    if (!d_)
-    {
-        return SystemConfigPrivate::default_;
-    }
-    return d_->getVal(eType, key);
+    DP_D(SystemConfig);
+    return d->getVal(eType, key);
 }
