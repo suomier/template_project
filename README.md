@@ -26,7 +26,7 @@ svr_template_coroutines      C++协程封装的服务器项目模板
 
 ```
 ├─common    template_common: 引入外部库; 内部处理: 日志, 配置, 外部接口交互, 跨平台等;
-├─conf      配置文件
+├─conf      配置文件; 编译时会自动拷贝到生成目录;
 ├─example   例子: 方便快速验证语法; cmake配置时, 会将其中每个文件配置对应的exe; 
 └─test      测试: gtest单元测试目录; 
 ```
@@ -54,7 +54,10 @@ svr_template_coroutines      C++协程封装的服务器项目模板
 
 
 
+## 20260322 
 
+- 添加第三方版权文件夹: `THIRD_PARTY_LICENSES`, 未来会把使用到的第三方库的版本放置到其中;
+- 提取webrtc的`FunctionView`模板类, 增加语法测试;
 
 
 

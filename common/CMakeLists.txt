@@ -86,6 +86,7 @@ message("CMAKE_CURRENT_SOURCE_DIR:${CMAKE_CURRENT_SOURCE_DIR}")
 file(GLOB HEADER_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/base/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/base/private/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/types/*"
         "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/platform/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/io/*.h"
@@ -98,6 +99,7 @@ file(GLOB HEADER_FILES
 file(GLOB SOURCE_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/base/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/base/private/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/types/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/platform/*"
         "${CMAKE_CURRENT_SOURCE_DIR}/io/*.cpp"
