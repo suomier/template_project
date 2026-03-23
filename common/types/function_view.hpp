@@ -11,18 +11,18 @@
 #ifndef API_FUNCTION_VIEW_H_
 #define API_FUNCTION_VIEW_H_
 
+#include <cassert>
+#include <iostream>
 #include <type_traits>
 #include <utility>
 
 // 源代码来自 webrtc M96版本, 路径: function_view.h
-// FunctionView 与 std::function 类似，会包装任何可调用对象并隐藏其
-// 实际类型，只暴露其签名。但与 std::function 不同的是，
-// FunctionView 不拥有其可调用对象——它只是指向它。因此，它主要
-// 适合作为函数参数使用，当可调用参数在函数返回后不会被再次调用时。
+// FunctionView 与 std::function 类似，会包装任何可调用对象并隐藏其实际类型，只暴露其签名。
+// 但与 std::function 不同的是，FunctionView 不拥有其可调用对象——它只是指向它。
+// 因此，它主要适合作为函数参数使用，当可调用参数在函数返回后不会被再次调用时。
 //
-// 它的构造函数是隐式的，这样调用者就不必将 lambda 表达式和
-// 其他可调用对象显式地转换为 FunctionView<Blah(Blah, Blah)>。这是
-// 安全的，因为 FunctionView 只是对真实可调用对象的引用。
+// 它的构造函数是隐式的，这样调用者就不必将 lambda 表达式和其他可调用对象显式地转换为 FunctionView<Blah(Blah, Blah)>。
+// 这是安全的，因为 FunctionView 只是对真实可调用对象的引用。
 //
 // 使用示例：
 //
@@ -96,7 +96,7 @@ public:
     FunctionView(F &&f)
         : call_(f ? CallFunPtr<typename std::remove_pointer<F>::type> : nullptr)
     {
-        f_.fun_ptr = reinterpret_cast<void (*)()>(f);
+        f_.fun_ptr = reinterpret_cast<void *>(f);
     }
 
     /**
@@ -140,7 +140,7 @@ public:
      */
     RetT operator()(ArgT... args) const
     {
-        RTC_DCHECK(call_);
+        CheckNotNull(call_ != nullptr, "FunctionView is null, cannot call empty function");
         return call_(f_, std::forward<ArgT>(args)...);
     }
 
@@ -161,19 +161,41 @@ public:
 
 private:
     /**
+     * @brief 内部断言检查函数
+     * @param condition 要检查的条件
+     * @param message 错误信息
+     *
+     * @details
+     * 如果条件为 false，则：
+     * - 在 Debug 模式下触发 assert 断言
+     * - 输出错误信息到标准错误流
+     *
+     * 这样既保留了 assert 的调试功能，又提供了更好的错误信息输出。
+     */
+    static void CheckNotNull(bool condition, const char* message)
+    {
+        if (!condition)
+        {
+            std::cerr << "[FunctionView] Assertion failed: " << message << std::endl;
+            assert(condition); // 在 Debug 模式下触发断言
+        }
+    }
+
+    /**
      * @brief 用于存储可调用对象的联合体
      *
      * @details
      * 联合体用于存储不同类型的可调用对象指针：
      * - void_ptr: 指向 lambda、仿函数或其他可调用对象的指针
-     * - fun_ptr: 指向函数的指针
+     * - fun_ptr: 指向函数的指针（以 void* 形式存储，调用时再转换）
      *
      * 使用联合体是因为需要根据可调用对象的类型使用不同的存储方式。
+     * 注意：函数指针以 void* 形式存储，因为不同函数指针类型不能共享同一联合体成员。
      */
     union VoidUnion
     {
-        void *void_ptr;    ///< 指向可调用对象的通用指针
-        void (*fun_ptr)(); ///< 函数指针
+        void *void_ptr; ///< 指向可调用对象的通用指针
+        void *fun_ptr;  ///< 函数指针（存储为 void*）
     };
 
     /**
@@ -207,7 +229,9 @@ private:
     template <typename F>
     static RetT CallFunPtr(VoidUnion vu, ArgT... args)
     {
-        return (reinterpret_cast<typename std::add_pointer<F>::type>(vu.fun_ptr))(std::forward<ArgT>(args)...);
+        using FuncPtrType = typename std::add_pointer<F>::type;
+        auto func_ptr = reinterpret_cast<FuncPtrType>(vu.fun_ptr);
+        return func_ptr(std::forward<ArgT>(args)...);
     }
 
     /**
