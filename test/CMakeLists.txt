@@ -32,3 +32,11 @@ foreach (src_file ${exe_file_list}) # 对每个文件生成对应的测试程序
 
 endforeach (src_file ${exe_file_list})
 
+
+# 全部测试
+add_executable(test_all ${exe_file_list})
+target_link_libraries(test_all
+        PUBLIC template_common
+        PUBLIC ${TEST_LIBS}
+)
+gtest_discover_tests(test_all)
